@@ -47,7 +47,11 @@
                 allowPageScroll     : 'vertical',
                 threshold           : 100,
                 excludedElements    : 'label, button, input, select, textarea, .noSwipe',
-                speed               : 250
+                speed               : 250,
+                visibilityBehaviour : {
+                    ariaHidden: true,
+                    className:  null
+                }
 
             }, options );
 
@@ -137,6 +141,9 @@
              */
             var hideNavigation = (function() {
                 nav.removeClass('ssm-nav-visible');
+                if (settings.visibilityBehaviour.ariaHidden) {
+                    nav.prop('aria-hidden', true);
+                }
                 scrollNav(navWidth, settings.speed);
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
@@ -144,11 +151,21 @@
 
             var showNavigation = (function() {
                 nav.addClass('ssm-nav-visible');
+                if (settings.visibilityBehaviour.ariaHidden) {
+                    nav.prop('aria-hidden', false);
+                }
                 scrollNav(0, settings.speed);       
             });
 
             $('.ssm-open-nav').click(function() {
-                if(nav.hasClass('ssm-nav-visible')) {
+                var visibility = null;
+                if (settings.visibilityBehaviour.ariaHidden) {
+                    visibility = !nav.prop('aria-hidden');
+                }
+                else {
+                    visibility = nav.hasClass('ssm-nav-visible');
+                }
+                if (visibility) {
                     hideNavigation();
                 }
                 else{

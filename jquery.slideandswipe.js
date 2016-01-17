@@ -134,7 +134,7 @@
                 if(distance == '0') {
                     target.addClass('ssm-nav-visible');
                     if (settings.visibilityBehaviour.ariaHidden) {
-                        target.prop('aria-hidden', false);
+                        target.attr('aria-hidden', 'false');
                     }
                     $('html').css('overflow','hidden');
                     $('.ssm-overlay').fadeIn();
@@ -147,7 +147,7 @@
             var hideNavigation = (function(target) {
                 target.removeClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
-                    target.prop('aria-hidden', true);
+                    target.attr('aria-hidden', 'true');
                 }
                 scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
@@ -157,7 +157,7 @@
             var showNavigation = (function(target) {
                 target.addClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
-                    target.prop('aria-hidden', false);
+                    target.prop('aria-hidden', 'false');
                 }
                 scrollNav(target, 0, settings.speed);       
             });
@@ -169,7 +169,7 @@
                 $(this).click(function(e){
                     var visibility = null;
                     if (settings.visibilityBehaviour.ariaHidden) {
-                        visibility = !target.prop('aria-hidden');
+                        visibility = target.aria('aria-hidden') != 'true';
                     }
                     else {
                         visibility = target.hasClass('ssm-nav-visible');

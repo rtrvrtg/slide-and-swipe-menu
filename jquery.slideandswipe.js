@@ -64,6 +64,8 @@
              * end : close navigation
              */
             function swipeStatus(event, phase, direction, distance) {
+                var target = nav;
+
                 if(phase == 'start') {
                     if(nav.hasClass('ssm-nav-visible')) {
                         transInitial = 0;
@@ -81,7 +83,7 @@
                         mDistance = -distance;
                     }
 
-                    scrollNav(mDistance, 0);
+                    scrollNav(target, mDistance, 0);
 
                 } else if (phase == 'move' && direction == 'right') {
                     if(transInitial < 0) {
@@ -89,12 +91,12 @@
                     } else {
                         mDistance = distance;
                     }
-                    scrollNav(mDistance, 0);
+                    scrollNav(target, mDistance, 0);
                 } else if (phase == 'cancel' && (direction == 'left') && transInitial === 0) {
-                    scrollNav(0, settings.speed);
+                    scrollNav(target, 0, settings.speed);
                 } else if (phase == 'end' && (direction == 'left')) {
                         
-                       hideNavigation();
+                       hideNavigation(target);
                 } else if ((phase == 'end' || phase == 'cancel') && (direction == 'right')) {
                     console.log('end');
                 }
@@ -114,8 +116,8 @@
             /**
              * Manually update the position of the nav on drag
              */
-            function scrollNav(distance, duration) {
-                nav.css('transition-duration', (duration / 1000).toFixed(1) + 's');
+            function scrollNav(target, distance, duration) {
+                target.css('transition-duration', (duration / 1000).toFixed(1) + 's');
 
                 if(distance >= 0) {
                     distance = 0;
@@ -124,13 +126,16 @@
                     distance = navWidth;
                 }
                 if(isSafari() || isChrome()) {
-                   nav.css('-webkit-transform', 'translate(' + distance + 'px,0)');
+                   target.css('-webkit-transform', 'translate(' + distance + 'px,0)');
                 }
                 else{
-                   nav.css('transform', 'translate(' + distance + 'px,0)');
+                   target.css('transform', 'translate(' + distance + 'px,0)');
                 }
                 if(distance == '0') {
-                    $('.ssm-open-nav').addClass('ssm-nav-visible');
+                    target.addClass('ssm-nav-visible');
+                    if (settings.visibilityBehaviour.ariaHidden) {
+                        target.prop('aria-hidden', false);
+                    }
                     $('html').css('overflow','hidden');
                     $('.ssm-overlay').fadeIn();
                 }
@@ -139,38 +144,45 @@
             /**
              * Open / close by click on burger icon
              */
-            var hideNavigation = (function() {
-                nav.removeClass('ssm-nav-visible');
+            var hideNavigation = (function(target) {
+                target.removeClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
-                    nav.prop('aria-hidden', true);
+                    target.prop('aria-hidden', true);
                 }
-                scrollNav(navWidth, settings.speed);
+                scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
             });
 
-            var showNavigation = (function() {
-                nav.addClass('ssm-nav-visible');
+            var showNavigation = (function(target) {
+                target.addClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
-                    nav.prop('aria-hidden', false);
+                    target.prop('aria-hidden', false);
                 }
-                scrollNav(0, settings.speed);       
+                scrollNav(target, 0, settings.speed);       
             });
 
-            $('.ssm-open-nav').click(function() {
-                var visibility = null;
-                if (settings.visibilityBehaviour.ariaHidden) {
-                    visibility = !nav.prop('aria-hidden');
-                }
-                else {
-                    visibility = nav.hasClass('ssm-nav-visible');
-                }
-                if (visibility) {
-                    hideNavigation();
-                }
-                else{
-                    showNavigation();
-                }
+            $('[data-ssm-open-nav]').each(function(){
+                // Acquire target
+                var target = $($(this).attr('data-ssm-open-nav'));
+
+                $(this).click(function(e){
+                    var visibility = null;
+                    if (settings.visibilityBehaviour.ariaHidden) {
+                        visibility = !target.prop('aria-hidden');
+                    }
+                    else {
+                        visibility = target.hasClass('ssm-nav-visible');
+                    }
+                    if (visibility) {
+                        hideNavigation(target);
+                    }
+                    else{
+                        showNavigation(target);
+                    }
+                });
+
+                hideNavigation(target);
             });
         }
     ;

@@ -169,7 +169,7 @@
                 $(this).click(function(e){
                     var visibility = null;
                     if (settings.visibilityBehaviour.ariaHidden) {
-                        visibility = target.aria('aria-hidden') != 'true';
+                        visibility = target.attr('aria-hidden') != 'true';
                     }
                     else {
                         visibility = target.hasClass('ssm-nav-visible');

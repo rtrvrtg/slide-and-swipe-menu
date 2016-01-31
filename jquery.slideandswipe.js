@@ -150,7 +150,7 @@
                 target.removeClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
                     target.attr('aria-hidden', 'true');
-                    trigger.prop('aria-expanded', 'false');
+                    trigger.attr('aria-expanded', 'false');
                 }
                 scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
@@ -160,8 +160,8 @@
             var showNavigation = (function(target, trigger) {
                 target.addClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
-                    target.prop('aria-hidden', 'false');
-                    trigger.prop('aria-expanded', 'true');
+                    target.attr('aria-hidden', 'false');
+                    trigger.attr('aria-expanded', 'true');
                 }
                 scrollNav(target, 0, settings.speed);       
             });

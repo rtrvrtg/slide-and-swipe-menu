@@ -179,14 +179,14 @@
                         visibility = target.hasClass('ssm-nav-visible');
                     }
                     if (visibility) {
-                        hideNavigation(target, this);
+                        hideNavigation(target, $(this));
                     }
                     else{
-                        showNavigation(target, this);
+                        showNavigation(target, $(this));
                     }
                 });
 
-                hideNavigation(target, this);
+                hideNavigation(target, $(this));
             });
         }
     ;

@@ -37,6 +37,7 @@
         $.fn.slideAndSwipe = function(options) {
 
             var nav = $(this); // get the element to swipe
+            var selector = this.selector;
             var navWidth = -nav.outerWidth();
             var transInitial = navWidth;
 
@@ -96,7 +97,7 @@
                     scrollNav(target, 0, settings.speed);
                 } else if (phase == 'end' && (direction == 'left')) {
                         
-                       hideNavigation(target);
+                       hideNavigation(target, $('[data-ssm-open-nav="' + selector + '"]'));
                 } else if ((phase == 'end' || phase == 'cancel') && (direction == 'right')) {
                     console.log('end');
                 }
@@ -135,6 +136,7 @@
                     target.addClass('ssm-nav-visible');
                     if (settings.visibilityBehaviour.ariaHidden) {
                         target.attr('aria-hidden', 'false');
+                        $('[data-ssm-open-nav="' + selector + '"]').attr('aria-expanded', 'true');
                     }
                     $('html').css('overflow','hidden');
                     $('.ssm-overlay').fadeIn();
@@ -144,20 +146,22 @@
             /**
              * Open / close by click on burger icon
              */
-            var hideNavigation = (function(target) {
+            var hideNavigation = (function(target, trigger) {
                 target.removeClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
                     target.attr('aria-hidden', 'true');
+                    trigger.prop('aria-expanded', 'false');
                 }
                 scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
             });
 
-            var showNavigation = (function(target) {
+            var showNavigation = (function(target, trigger) {
                 target.addClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
                     target.prop('aria-hidden', 'false');
+                    trigger.prop('aria-expanded', 'true');
                 }
                 scrollNav(target, 0, settings.speed);       
             });
@@ -175,14 +179,14 @@
                         visibility = target.hasClass('ssm-nav-visible');
                     }
                     if (visibility) {
-                        hideNavigation(target);
+                        hideNavigation(target, this);
                     }
                     else{
-                        showNavigation(target);
+                        showNavigation(target, this);
                     }
                 });
 
-                hideNavigation(target);
+                hideNavigation(target, this);
             });
         }
     ;

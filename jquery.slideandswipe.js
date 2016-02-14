@@ -137,6 +137,7 @@
                     if (settings.visibilityBehaviour.ariaHidden) {
                         target.attr('aria-hidden', 'false');
                         $('[data-ssm-open-nav="' + selector + '"]').attr('aria-expanded', 'true');
+                        toggleFocusable(target, $('[data-ssm-open-nav="' + selector + '"]'), true);
                     }
                     $('html').css('overflow','hidden');
                     $('.ssm-overlay').fadeIn();
@@ -155,6 +156,7 @@
                 scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
+                toggleFocusable(target, trigger, false);
             });
 
             var showNavigation = (function(target, trigger) {
@@ -163,8 +165,25 @@
                     target.attr('aria-hidden', 'false');
                     trigger.attr('aria-expanded', 'true');
                 }
-                scrollNav(target, 0, settings.speed);       
+                scrollNav(target, 0, settings.speed);
+                toggleFocusable(target, trigger, true);
             });
+
+            var toggleFocusable = function(target, trigger, visible) {
+                var targets = target.find('a, input, select, textarea, button');
+                targets.attr({
+                    tabindex: visible ? '0' : '-1',
+                    'aria-hidden': visible ? 'false' : 'true'
+                });
+                if (visible) {
+                    targets.first().focus();
+                }
+                else {
+                    if (!!trigger) {
+                        trigger.focus();
+                    }
+                }
+            };
 
             $('[data-ssm-open-nav]').each(function(){
                 // Acquire target

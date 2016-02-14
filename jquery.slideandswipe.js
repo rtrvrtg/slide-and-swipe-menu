@@ -147,7 +147,7 @@
             /**
              * Open / close by click on burger icon
              */
-            var hideNavigation = (function(target, trigger) {
+            var hideNavigation = (function(target, trigger, init) {
                 target.removeClass('ssm-nav-visible');
                 if (settings.visibilityBehaviour.ariaHidden) {
                     target.attr('aria-hidden', 'true');
@@ -156,7 +156,7 @@
                 scrollNav(target, navWidth, settings.speed);
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
-                toggleFocusable(target, trigger, false);
+                toggleFocusable(target, trigger, false, init);
             });
 
             var showNavigation = (function(target, trigger) {
@@ -169,27 +169,34 @@
                 toggleFocusable(target, trigger, true);
             });
 
-            var toggleFocusable = function(target, trigger, visible) {
-                var targets = target.find('a, input, select, textarea, button');
+            var getFocusable = function(target) {
+                return target.find('a, input, select, textarea, button, [tabindex]');
+            };
+
+            var toggleFocusable = function(target, trigger, visible, init) {
+                var targets = getFocusable(target);
                 targets.attr({
                     tabindex: visible ? '0' : '-1',
                     'aria-hidden': visible ? 'false' : 'true'
                 });
-                if (visible) {
-                    targets.first().focus();
-                }
-                else {
-                    if (!!trigger) {
-                        trigger.focus();
+                if (!init) {
+                    if (visible) {
+                        targets.first().focus();
+                    }
+                    else {
+                        if (!!trigger) {
+                            trigger.focus();
+                        }
                     }
                 }
             };
 
             $('[data-ssm-open-nav]').each(function(){
                 // Acquire target
-                var target = $($(this).attr('data-ssm-open-nav'));
+                var trigger = $(this),
+                target = $(trigger.attr('data-ssm-open-nav'));
 
-                $(this).click(function(e){
+                trigger.click(function(e){
                     var visibility = null;
                     if (settings.visibilityBehaviour.ariaHidden) {
                         visibility = target.attr('aria-hidden') != 'true';
@@ -205,7 +212,24 @@
                     }
                 });
 
-                hideNavigation(target, $(this));
+                trigger.blur(function(e){
+                   var visibility = null;
+                    if (settings.visibilityBehaviour.ariaHidden) {
+                        visibility = target.attr('aria-hidden') != 'true';
+                    }
+                    else {
+                        visibility = target.hasClass('ssm-nav-visible');
+                    }
+                    if (visibility) {
+                        getFocusable(target).first().focus();
+                    }
+                });
+
+                getFocusable(target).last().blur(function(e){
+                    trigger.focus();
+                });
+
+                hideNavigation(target, $(this), true);
             });
         }
     ;

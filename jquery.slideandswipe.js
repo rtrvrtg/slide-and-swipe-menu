@@ -157,6 +157,7 @@
                 $('html').css('overflow','visible');
                 $('.ssm-overlay').fadeOut();
                 toggleFocusable(target, trigger, false, init);
+                $('body').css({overflow: 'auto'});
             });
 
             var showNavigation = (function(target, trigger) {
@@ -167,6 +168,7 @@
                 }
                 scrollNav(target, 0, settings.speed);
                 toggleFocusable(target, trigger, true);
+                $('body').css({overflow: 'hidden'});
             });
 
             var getFocusable = function(target) {
